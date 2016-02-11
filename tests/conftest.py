@@ -15,22 +15,22 @@ class TestConfig(Config):
     DEBUG = True
 
 
-Postgresql = testing.postgresql.PostgresqlFactory(cache_initialized_db=True)
+@pytest.yield_fixture(scope='session')
+def temporary_postgresql_database():
+    testdb = testing.postgresql.Postgresql()
+    yield testdb
+    testdb.stop()
 
 
 @pytest.yield_fixture(scope='function')
-def app():
+def app(temporary_postgresql_database):
     """An application for the tests."""
-    testdb = Postgresql()
-    TestConfig.SQLALCHEMY_DATABASE_URI = testdb.url()
+    TestConfig.SQLALCHEMY_DATABASE_URI = temporary_postgresql_database.url()
     _app = create_app(TestConfig)
     ctx = _app.test_request_context()
     ctx.push()
-
     yield _app
-
     ctx.pop()
-    testdb.stop()
 
 
 @pytest.yield_fixture(scope='function')

@@ -2,7 +2,13 @@ import pytest
 
 
 @pytest.mark.usefixtures('db')
-class TestUser:
+class TestSomething:
 
-    def test_basic_operations(self):
+    def test_one_thing(self):
+        pass
+
+    def test_another_thing(self):
+        pass
+
+    def test_a_third_thing(self):
         pass
